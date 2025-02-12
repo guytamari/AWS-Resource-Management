@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create EC2 Instance</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 50px;
+      }
+      form {
+        display: inline-block;
+        text-align: left;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        background-color: #f9f9f9;
+      }
+      label {
+        font-weight: bold;
+        display: block;
+        margin-top: 10px;
+      }
+      select,
+      input {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+      }
+      button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Create an EC2 Instance</h1>
+
+    <form action="/create-ec2" method="POST">
+      <label for="instance_type">Instance Type:</label>
+      <select id="instance_type" name="instance_type" required>
+        <option value="t3.nano">t3.nano</option>
+        <option value="t4g.nano">t4g.nano</option>
+      </select>
+
+      <label for="ami">Select AMI:</label>
+      <select id="ami" name="ami" required>
+        <option value="ubuntu">Latest Ubuntu AMI</option>
+        <option value="amazon_linux">Latest Amazon Linux AMI</option>
+      </select>
+
+      <label for="tag_name">Instance Tag Name:</label>
+      <input
+        type="text"
+        id="tag_name"
+        name="tag_name"
+        placeholder="Enter a name"
+        required
+      />
+
+      <button type="submit">Create EC2 Instance</button>
+    </form>
+  </body>
+</html>
