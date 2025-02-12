@@ -11,16 +11,45 @@
         margin: 50px;
       }
       button {
-        padding: 10px 20px;
-        font-size: 16px;
+        padding: 5px 10px;
+        font-size: 14px;
         background-color: #007bff;
         color: white;
         border: none;
         cursor: pointer;
-        margin-top: 20px;
+        margin: 5px;
       }
       button:hover {
         background-color: #0056b3;
+      }
+      .stop-btn {
+        background-color: #dc3545;
+      }
+      .stop-btn:hover {
+        background-color: #a71d2a;
+      }
+      .restart-btn {
+        background-color: #ffc107;
+        color: black;
+      }
+      .restart-btn:hover {
+        background-color: #d39e00;
+      }
+      table {
+        width: 80%;
+        margin-top: 30px;
+        border-collapse: collapse;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      th,
+      td {
+        padding: 10px;
+        text-align: center;
+        border: 1px solid #ddd;
+      }
+      th {
+        background-color: #f2f2f2;
       }
     </style>
   </head>
@@ -29,5 +58,80 @@
     <a href="/ec2/spec-ec2">
       <button type="button">Create EC2 Instance</button>
     </a>
+
+    <h2>Created EC2 Instances</h2>
+    <table id="instance-table">
+      <thead>
+        <tr>
+          <th>Instance ID</th>
+          <th>Public IP</th>
+          <th>Instance Type</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- EC2 instance rows will go here -->
+      </tbody>
+    </table>
+
+    <script>
+      // Function to send a request to start/stop/restart an instance
+      async function manageInstance(instanceId, action) {
+        try {
+          const response = await fetch(`/ec2/${action}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ instance_id: instanceId }),
+          });
+
+          const result = await response.json();
+          alert(
+            `Instance ${instanceId} ${action} request sent.\nStatus: ${result.status}`
+          );
+        } catch (error) {
+          console.error(`Error ${action} instance:`, error);
+          alert(`Failed to ${action} instance ${instanceId}.`);
+        }
+      }
+
+      // Function to fetch EC2 instance data and update the table
+      async function fetchEC2Instances() {
+        try {
+          const response = await fetch("/ec2/instances"); // API endpoint to get EC2 data
+          const data = await response.json();
+
+          const tableBody = document.querySelector("#instance-table tbody");
+          tableBody.innerHTML = ""; // Clear the table before adding new rows
+          const instances = data.instances.flat(); // Flatten nested arrays
+
+          // Populate table with the instances
+          instances.forEach((instance) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${instance.id}</td>
+              <td>${instance.public_ip || "N/A"}</td>
+              <td>${instance.instance_type}</td>
+              <td>
+                <button onclick="manageInstance('${
+                  instance.id
+                }', 'start')">Start</button>
+                <button class="stop-btn" onclick="manageInstance('${
+                  instance.id
+                }', 'stop')">Stop</button>
+                <button class="restart-btn" onclick="manageInstance('${
+                  instance.id
+                }', 'restart')">Restart</button>
+              </td>
+            `;
+            tableBody.appendChild(row);
+          });
+        } catch (error) {
+          console.error("Error fetching EC2 instances:", error);
+        }
+      }
+
+      // Call the function to populate the table when the page loads
+      window.onload = fetchEC2Instances;
+    </script>
   </body>
 </html>
