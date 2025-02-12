@@ -19,7 +19,7 @@ AMI_IDS = {
     },
 }
 
-ami_id = AMI_IDS.get(ami_choice, {}).get(instance_type, "ami-12345678")
+ami_id = AMI_IDS.get(ami_choice, {}).get(instance_type, "ami-04b4f1a9cf54c11d0")
 
 instances = []
 for i in range(num_instances):
@@ -31,10 +31,10 @@ for i in range(num_instances):
     )
     instances.append(instance)
 
-# Use apply to get the actual values from the Output objects and write them to a file
+
 def get_instance_data(instance):
     return {
-        "id": instance.id.apply(lambda x: x),  # Unwrap the Output to get the actual value
+        "id": instance.id.apply(lambda x: x),
         "public_ip": instance.public_ip.apply(lambda x: x),
         "instance_type": instance_type
     }
@@ -42,12 +42,11 @@ def get_instance_data(instance):
 
 instance_data = [get_instance_data(instance) for instance in instances]
 
-# Save the instance data to a file once the values are resolved
+# Save the instance data to a file
 def save_instance_data_to_file(instances_data):
     with open("ec2_instances.json", "w") as f:
         json.dump(instances_data, f)
 
-# Once Pulumi applies the resources, save the instance data
 pulumi.Output.all(instance_data).apply(save_instance_data_to_file)
 
 pulumi.export("instance_ids", [instance.id for instance in instances])

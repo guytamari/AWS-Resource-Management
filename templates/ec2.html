@@ -75,6 +75,15 @@
     </table>
 
     <script>
+      function showLoading() {
+        document.getElementById("loading").style.display = "block";
+      }
+
+      // Function to hide the loading screen
+      function hideLoading() {
+        document.getElementById("loading").style.display = "none";
+      }
+
       // Function to send a request to start/stop/restart an instance
       async function manageInstance(instanceId, action) {
         try {
@@ -97,14 +106,13 @@
       // Function to fetch EC2 instance data and update the table
       async function fetchEC2Instances() {
         try {
-          const response = await fetch("/ec2/instances"); // API endpoint to get EC2 data
+          const response = await fetch("/ec2/instances");
           const data = await response.json();
 
           const tableBody = document.querySelector("#instance-table tbody");
-          tableBody.innerHTML = ""; // Clear the table before adding new rows
-          const instances = data.instances.flat(); // Flatten nested arrays
+          tableBody.innerHTML = "";
+          const instances = data.instances.flat();
 
-          // Populate table with the instances
           instances.forEach((instance) => {
             const row = document.createElement("tr");
             row.innerHTML = `
@@ -130,7 +138,6 @@
         }
       }
 
-      // Call the function to populate the table when the page loads
       window.onload = fetchEC2Instances;
     </script>
   </body>
