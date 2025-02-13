@@ -52,13 +52,15 @@
         const confirmationField = document.getElementById(
           "public_confirmation"
         );
+        const checkbox = document.getElementsByName("confirm_public")[0];
 
         if (accessType === "public") {
-          confirmationField.style.display = "block";
+          confirmationField.classList.remove("hidden"); // Show
+          checkbox.setAttribute("required", "true");
         } else {
-          confirmationField.style.display = "none";
-          // Uncheck the checkbox when hidden
-          document.getElementsByName("confirm_public")[0].checked = false;
+          confirmationField.classList.add("hidden"); // Hide
+          checkbox.removeAttribute("required");
+          checkbox.checked = false;
         }
       }
     </script>
@@ -66,7 +68,12 @@
   <body>
     <h1>Create an S3 Bucket</h1>
 
-    <form action="/create-s3" method="POST" enctype="multipart/form-data">
+    <form
+      action="/create-s3"
+      method="POST"
+      enctype="multipart/form-data"
+      novalidate
+    >
       <label for="bucket_name">Bucket Name:</label>
       <input type="text" id="bucket_name" name="bucket_name" required />
 

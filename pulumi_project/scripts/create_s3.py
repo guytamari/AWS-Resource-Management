@@ -11,9 +11,11 @@ else:
 
 def create_s3():
     bucket = aws.s3.Bucket(
-        "guytamari-bucket",
+        BUCKET_NAME,
         bucket=BUCKET_NAME,
         acl=acl,
         tags={"Name": BUCKET_NAME, "Owner": "guytamari"}
     )
-    return s3
+    return bucket
+
+s3 = create_s3()

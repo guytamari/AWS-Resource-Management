@@ -47,8 +47,10 @@ def create_ec2():
     os.environ["AMI"] = ami_choice
     os.environ["TAG_NAME"] = tag_name
     os.environ["NUM_INSTANCES"] = num_instances
-    subprocess.run(["pulumi", "refresh", "--stack","dev","--yes"], cwd="pulumi_project")
-    subprocess.run(["pulumi", "up", "--stack","dev", "--yes"], cwd="pulumi_project")
+    env = os.environ.copy()
+    env["PULUMI_STACK"] = "dev"
+    subprocess.run(["pulumi", "refresh", "--stack","dev","--yes"], cwd="pulumi_project",env=env)
+    subprocess.run(["pulumi", "up", "--stack","dev", "--yes"], cwd="pulumi_project",env=env)
     return redirect(url_for("home"))
 
 
@@ -105,13 +107,16 @@ def create_s3():
     os.environ["BUCKET_NAME"] = bucket_name
     os.environ["ACCESS_TYPE"] = access_type
     files = request.files.getlist('file_upload')
+    print("hello")
     
     if files:
         for file in files:
-            # Save the file in temps
+            # save the file in temps
             file.save(os.path.join("temp", file.filename))
-    subprocess.run(["pulumi", "refresh","--stack","s3", "--yes"], cwd="pulumi_project")
-    subprocess.run(["pulumi", "up","--stack","s3", "--yes"], cwd="pulumi_project")
+    env = os.environ.copy()  
+    env["PULUMI_STACK"] = "s3"
+    # subprocess.run(["pulumi", "refresh","--stack","s3", "--yes"], cwd="pulumi_project",env=env)
+    subprocess.run(["pulumi", "up","--stack","s3", "--yes"], cwd="pulumi_project",env=env)
     return redirect(url_for("home"))
 
 
