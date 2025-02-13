@@ -107,7 +107,6 @@ def create_s3():
     os.environ["BUCKET_NAME"] = bucket_name
     os.environ["ACCESS_TYPE"] = access_type
     files = request.files.getlist('file_upload')
-    print("hello")
     
     if files:
         for file in files:
