@@ -103,12 +103,17 @@ def restart_instance():
 
 
 def calling_the_s3_creation(is_files, temp_files):
-    from pulumi_project.scripts.create_s3 import s3, upload_files_to_s3
-    print(s3)
     if is_files:
-        from pulumi_project.scripts.create_s3 import s3, upload_files_to_s3
-        print(s3)
+        from pulumi_project.scripts.create_s3 import create_s3, upload_files_to_s3
+        s3 = create_s3()
         upload_files_to_s3(temp_files)
+        print(s3)
+    else:
+        from pulumi_project.scripts.create_s3 import create_s3
+        s3 = create_s3()
+        print(s3)
+
+        
         
 
 
@@ -120,6 +125,7 @@ def create_s3():
     os.environ["ACCESS_TYPE"] = access_type
     files = request.files.getlist('file_upload')
     
+    print(f"data from app.py {bucket_name},{access_type}")
     
     if not os.path.exists("temp"):
         os.makedirs("temp")
@@ -138,6 +144,10 @@ def create_s3():
     else:
         calling_the_s3_creation(False, None)
 
+
+
+    
+    
     return redirect(url_for("home"))
 
 

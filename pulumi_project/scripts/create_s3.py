@@ -1,11 +1,12 @@
 import boto3
 import os
 import json
-from .config import BUCKET_NAME,ACCESS_TYPE
+from .config import get_s3_config
 
 
 def create_s3():
-    
+    BUCKET_NAME, ACCESS_TYPE = get_s3_config()
+    print(f"data from create s3 function {ACCESS_TYPE},{BUCKET_NAME}")
     s3_client = boto3.client("s3")
     response = s3_client.create_bucket(
         Bucket=BUCKET_NAME,)
@@ -35,32 +36,32 @@ def create_s3():
     )
     
     if ACCESS_TYPE == 'public':
-            s3_client.put_public_access_block(
-                Bucket=BUCKET_NAME,
-                PublicAccessBlockConfiguration={
-                    "BlockPublicAcls": False,
-                    "IgnorePublicAcls": False,
-                    "BlockPublicPolicy": False,
-                    "RestrictPublicBuckets": False
-                }
-            )
-            public_policy = {
-                "Version": "2012-10-17",
-                "Statement": [
-                    {
-                        "Sid": "PublicReadGetObject",
-                        "Effect": "Allow",
-                        "Principal": "*",
-                        "Action": "s3:GetObject",
-                        "Resource": f"arn:aws:s3:::{BUCKET_NAME}/*"
-                    }
-                    ]
-                        }
-            s3_client.put_bucket_policy(
+    
+        s3_client.put_public_access_block(
             Bucket=BUCKET_NAME,
-            Policy=json.dumps(public_policy))
+            PublicAccessBlockConfiguration={
+                "BlockPublicAcls": False,
+                "IgnorePublicAcls": False,
+                "BlockPublicPolicy": False,
+                "RestrictPublicBuckets": False
+            }
+        )
+        public_policy = {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Sid": "PublicReadGetObject",
+                    "Effect": "Allow",
+                    "Principal": "*",
+                    "Action": "s3:GetObject",
+                    "Resource": f"arn:aws:s3:::{BUCKET_NAME}/*"
+                }
+                ]
+                    }
+        s3_client.put_bucket_policy(
+        Bucket=BUCKET_NAME,
+        Policy=json.dumps(public_policy))
 
-    print(BUCKET_NAME,ACCESS_TYPE)
     return response
 
 
@@ -78,4 +79,3 @@ def upload_files_to_s3(temp_files):
 
 
 
-s3 = create_s3()
