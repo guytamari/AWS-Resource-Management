@@ -32,7 +32,9 @@ elif stack_name == "s3":
     from scripts.create_s3 import s3
 
     # S3 Bucket creation and management
-    pulumi.export("s3_bucket", s3.id)
+    # pulumi.export("s3_bucket", s3.id)
+    # pulumi.export("bucket_name", s3.id)
+    # pulumi.export("bucket_url", pulumi.Output.concat("https://", s3.bucket_regional_domain_name))
 
 else:
     raise ValueError(f"Unknown stack: {stack_name}")

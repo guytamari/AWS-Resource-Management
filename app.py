@@ -114,8 +114,10 @@ def create_s3():
             file.save(os.path.join("temp", file.filename))
     env = os.environ.copy()  
     env["PULUMI_STACK"] = "s3"
-    # subprocess.run(["pulumi", "refresh","--stack","s3", "--yes"], cwd="pulumi_project",env=env)
-    subprocess.run(["pulumi", "up","--stack","s3", "--yes"], cwd="pulumi_project",env=env)
+    from pulumi_project.scripts.create_s3 import s3
+    print(s3)
+    # # subprocess.run(["pulumi", "refresh","--stack","s3", "--yes"], cwd="pulumi_project",env=env)
+    # subprocess.run(["pulumi", "up","--stack","s3", "--yes"], cwd="pulumi_project",env=env)
     return redirect(url_for("home"))
 
 
