@@ -151,6 +151,12 @@ def create_s3():
     return redirect(url_for("home"))
 
 
+@app.route('/s3/buckets', methods=["GET"])
+def fetch_s3():
+    from pulumi_project.scripts.fetch_s3 import fetch_s3_buckets
+    return fetch_s3_buckets()
+
+
 
 
 if __name__ == "__main__":

@@ -17,10 +17,38 @@
         color: white;
         border: none;
         cursor: pointer;
-        margin-top: 20px;
+        margin: 5px;
       }
       button:hover {
         background-color: #0056b3;
+      }
+      .delete-btn {
+        background-color: #dc3545;
+      }
+      .delete-btn:hover {
+        background-color: #a71d2a;
+      }
+      .upload-btn {
+        background-color: #28a745;
+      }
+      .upload-btn:hover {
+        background-color: #218838;
+      }
+      table {
+        width: 80%;
+        margin-top: 30px;
+        border-collapse: collapse;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      th,
+      td {
+        padding: 10px;
+        text-align: center;
+        border: 1px solid #ddd;
+      }
+      th {
+        background-color: #f2f2f2;
       }
     </style>
   </head>
@@ -29,5 +57,105 @@
     <a href="/s3/spec-s3">
       <button type="button">Create S3 Bucket</button>
     </a>
+
+    <h2>Existing S3 Buckets</h2>
+    <table id="bucket-table">
+      <thead>
+        <tr>
+          <th>Bucket Name</th>
+          <th>Region</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- S3 bucket rows will be populated here -->
+      </tbody>
+    </table>
+
+    <script>
+      async function fetchS3Buckets() {
+        try {
+          const response = await fetch("/s3/buckets");
+          const data = await response.json();
+
+          const tableBody = document.querySelector("#bucket-table tbody");
+          tableBody.innerHTML = "";
+          data.buckets.forEach((bucket) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${bucket.name}</td>
+              <td>${bucket.region || "N/A"}</td>
+              <td>
+                <button class="delete-btn" onclick="manageBucket('${
+                  bucket.name
+                }', 'delete')">Delete</button>
+                <br>
+                <input type="file" id="file-${bucket.name}" />
+                <button class="upload-btn" onclick="uploadFile('${
+                  bucket.name
+                }')">Upload</button>
+              </td>
+            `;
+            tableBody.appendChild(row);
+          });
+        } catch (error) {
+          console.error("Error fetching S3 buckets:", error);
+        }
+      }
+
+      async function manageBucket(bucketName, action) {
+        if (
+          action === "delete" &&
+          !confirm(`Are you sure you want to delete ${bucketName}?`)
+        )
+          return;
+
+        try {
+          const response = await fetch(`/s3/${action}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ bucket_name: bucketName }),
+          });
+
+          const result = await response.json();
+          alert(
+            `Bucket ${bucketName} ${action} request sent.\nStatus: ${result.status}`
+          );
+
+          if (action === "delete") fetchS3Buckets(); // Refresh bucket list after deletion
+        } catch (error) {
+          console.error(`Error ${action} bucket:`, error);
+          alert(`Failed to ${action} bucket ${bucketName}.`);
+        }
+      }
+
+      async function uploadFile(bucketName) {
+        const fileInput = document.getElementById(`file-${bucketName}`);
+        if (!fileInput.files.length) {
+          alert(`Please select a file to upload to ${bucketName}.`);
+          return;
+        }
+
+        const file = fileInput.files[0];
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("bucket_name", bucketName);
+
+        try {
+          const response = await fetch("/s3/upload", {
+            method: "POST",
+            body: formData,
+          });
+
+          const result = await response.json();
+          alert(`File uploaded to ${bucketName}.\nStatus: ${result.status}`);
+        } catch (error) {
+          console.error("Error uploading file:", error);
+          alert("Failed to upload file.");
+        }
+      }
+
+      window.onload = fetchS3Buckets;
+    </script>
   </body>
 </html>

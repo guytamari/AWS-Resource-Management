@@ -75,16 +75,7 @@
     </table>
 
     <script>
-      function showLoading() {
-        document.getElementById("loading").style.display = "block";
-      }
-
-      // Function to hide the loading screen
-      function hideLoading() {
-        document.getElementById("loading").style.display = "none";
-      }
-
-      // Function to send a request to start/stop/restart an instance
+      // function to send a request to start/stop/restart an instance
       async function manageInstance(instanceId, action) {
         try {
           const response = await fetch(`/ec2/${action}`, {
@@ -103,7 +94,7 @@
         }
       }
 
-      // Function to fetch EC2 instance data and update the table
+      // function to fetch EC2 instance data and update the table
       async function fetchEC2Instances() {
         try {
           const response = await fetch("/ec2/instances");

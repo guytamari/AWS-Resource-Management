@@ -2,6 +2,7 @@ import boto3
 import os
 import json
 from .config import get_s3_config
+from flask import jsonify
 
 
 def create_s3():
@@ -62,7 +63,11 @@ def create_s3():
         Bucket=BUCKET_NAME,
         Policy=json.dumps(public_policy))
 
-    return response
+    location = s3_client.get_bucket_location(Bucket=BUCKET_NAME).get("LocationConstraint", "us-east-1")
+    return jsonify({
+    "name": BUCKET_NAME,
+    "region": location,
+    "tags": {tag["Key"]: tag["Value"] for tag in tags}}), 201
 
 
 
