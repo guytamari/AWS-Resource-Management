@@ -100,6 +100,18 @@ def restart_instance():
 # ---------------------------------------------------------------
 # s3 management and creations
 
+
+
+def calling_the_s3_creation(is_files, temp_files):
+    from pulumi_project.scripts.create_s3 import s3, upload_files_to_s3
+    print(s3)
+    if is_files:
+        from pulumi_project.scripts.create_s3 import s3, upload_files_to_s3
+        print(s3)
+        upload_files_to_s3(temp_files)
+        
+
+
 @app.route('/create-s3', methods=["POST"])
 def create_s3():
     bucket_name = request.form.get("bucket_name")
@@ -108,16 +120,24 @@ def create_s3():
     os.environ["ACCESS_TYPE"] = access_type
     files = request.files.getlist('file_upload')
     
-    if files:
+    
+    if not os.path.exists("temp"):
+        os.makedirs("temp")
+    
+    if any(file.filename for file in files):
+        temp_files = []
         for file in files:
-            # save the file in temps
-            file.save(os.path.join("temp", file.filename))
-    env = os.environ.copy()  
-    env["PULUMI_STACK"] = "s3"
-    from pulumi_project.scripts.create_s3 import s3
-    print(s3)
-    # # subprocess.run(["pulumi", "refresh","--stack","s3", "--yes"], cwd="pulumi_project",env=env)
-    # subprocess.run(["pulumi", "up","--stack","s3", "--yes"], cwd="pulumi_project",env=env)
+            temp_path = os.path.join("temp", file.filename)
+            file.save(temp_path)
+            temp_files.append(temp_path)
+
+        calling_the_s3_creation(True, temp_files)
+
+        for temp_file in temp_files:
+            os.remove(temp_file)
+    else:
+        calling_the_s3_creation(False, None)
+
     return redirect(url_for("home"))
 
 
