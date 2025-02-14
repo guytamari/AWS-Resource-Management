@@ -11,24 +11,6 @@ def create_s3():
     else:
         acl = "private"
 
-    # bucket = aws.s3.BucketV2(BUCKET_NAME,
-    #     acl=acl,
-    # )
-    # if acl == 'public-read':
-    #     bucket_policy = aws.s3.BucketPolicy('my-bucket-policy',
-    #         bucket=bucket.id,
-    #         policy=bucket.id.apply(lambda id: f'''{{
-    #             "Version": "2012-10-17",
-    #             "Statement": [
-    #                 {{
-    #                     "Effect": "Allow",
-    #                     "Principal": "*",
-    #                     "Action": "s3:GetObject",
-    #                     "Resource": "arn:aws:s3:::{id}/*"
-    #                 }}
-    #             ]
-    #         }}''')
-    #     )
     bucket = aws.s3.BucketV2(
         BUCKET_NAME,
         bucket=BUCKET_NAME,
