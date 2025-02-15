@@ -26,7 +26,7 @@ AMI_ID = AMI_IDS.get(AMI_CHOICE, {}).get(INSTANCE_TYPE, "ami-04b4f1a9cf54c11d0")
 # s3 configirations
 def get_s3_config():
     BUCKET_NAME = os.getenv("BUCKET_NAME", "s3-bucket-default")
-    ACCESS_TYPE = os.getenv("ACCESS_TYPE", "PRIVATE").lower()
+    ACCESS_TYPE = os.getenv("ACCESS_TYPE", "private").lower()
 
     return BUCKET_NAME, ACCESS_TYPE
 

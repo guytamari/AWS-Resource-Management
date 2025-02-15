@@ -160,9 +160,6 @@ def delete_bucket():
     data = request.json
     bucket_name = data.get("bucket_name")
 
-    if not bucket_name:
-        return jsonify({"error": "Bucket name is required"}), 400
-
     # delete all files inside the bucket
     objects = s3_client.list_objects_v2(Bucket=bucket_name)
     if "Contents" in objects:

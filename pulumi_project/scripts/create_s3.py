@@ -6,6 +6,17 @@ from flask import jsonify
 
 BUCKETS_FILE = "s3_buckets.json"
 
+
+def upload_files_to_s3(temp_files):
+    BUCKET_NAME, _ = get_s3_config()
+    s3_client = boto3.client("s3")
+    for file_path in temp_files:
+        file_name = os.path.basename(file_path)
+        s3_client.upload_file(file_path, BUCKET_NAME, file_name)
+        print(f"uploaded {file_name} to {BUCKET_NAME}")
+
+
+
 def save_bucket_name(bucket_name):
     try:
         if os.path.exists(BUCKETS_FILE):
@@ -60,7 +71,6 @@ def create_s3():
         s3_client.put_bucket_policy(Bucket=BUCKET_NAME, Policy=json.dumps(public_policy))
 
 
-    # Save bucket name
     save_bucket_name(BUCKET_NAME)
 
     return jsonify({
