@@ -128,9 +128,8 @@
         }
       }
 
-      async function manageDnsRecords(domainName) {
-        // Implement the logic to manage DNS records for the hosted zone
-        alert(`Managing DNS records for ${domainName}`);
+      async function manageDnsRecords(hostedZoneId) {
+        window.location.href = `/route53/manage-records/${hostedZoneId}`;
       }
     </script>
   </body>

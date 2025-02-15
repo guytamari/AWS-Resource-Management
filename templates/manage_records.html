@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage DNS Records</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 50px;
+      }
+      table {
+        width: 80%;
+        margin-top: 30px;
+        border-collapse: collapse;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      th,
+      td {
+        padding: 10px;
+        text-align: center;
+        border: 1px solid #ddd;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+      .delete-btn {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+      }
+      .delete-btn:hover {
+        background-color: #a71d2a;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Manage DNS Records</h1>
+    <h2>Records for Hosted Zone: {{ hosted_zone_id }}</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Record Name</th>
+          <th>Type</th>
+          <th>Value</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="records-table">
+        {% for record in records %}
+        <tr>
+          <td>{{ record.name }}</td>
+          <td>{{ record.type }}</td>
+          <td>{{ record.value }}</td>
+          <td>
+            <button
+              class="delete-btn"
+              onclick="deleteRecord('{{ record.name }}', '{{ record.type }}')"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <h2>Add New Record</h2>
+    <form id="add-record-form">
+      <input type="text" id="record-name" placeholder="Record Name" required />
+      <select id="record-type">
+        <option value="A">A</option>
+        <option value="CNAME">CNAME</option>
+        <option value="TXT">TXT</option>
+      </select>
+      <input
+        type="text"
+        id="record-value"
+        placeholder="Record Value"
+        required
+      />
+      <button type="submit">Add Record</button>
+    </form>
+
+    <script>
+      document
+        .getElementById("add-record-form")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
+
+          const hostedZoneId = "{{ hosted_zone_id }}";
+          const recordName = document.getElementById("record-name").value;
+          const recordType = document.getElementById("record-type").value;
+          const recordValue = document.getElementById("record-value").value;
+
+          const response = await fetch("/route53/add-record", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              hosted_zone_id: hostedZoneId,
+              record_name: recordName,
+              record_type: recordType,
+              record_value: recordValue,
+            }),
+          });
+
+          const result = await response.json();
+          if (result.status === "success") {
+            alert("Record added successfully!");
+            location.reload();
+          } else {
+            alert("Failed to add record.");
+          }
+        });
+
+      async function deleteRecord(recordName, recordType) {
+        if (
+          !confirm(`Are you sure you want to delete the record: ${recordName}?`)
+        )
+          return;
+
+        const hostedZoneId = "{{ hosted_zone_id }}";
+
+        const response = await fetch("/route53/delete-record", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            hosted_zone_id: hostedZoneId,
+            record_name: recordName,
+            record_type: recordType,
+          }),
+        });
+
+        const result = await response.json();
+        if (result.status === "success") {
+          alert("Record deleted successfully!");
+          location.reload();
+        } else {
+          alert("Failed to delete record.");
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -224,7 +224,38 @@ def fetch_hosted_zones():
 
 
 
+@app.route('/route53/manage-records/<hosted_zone_id>')
+def manage_records(hosted_zone_id):
+    from pulumi_project.scripts.manage_dns_records import fetch_dns_records
+    records = fetch_dns_records(hosted_zone_id)
+    return render_template("manage_records.html", records=records, hosted_zone_id=hosted_zone_id)
 
+
+@app.route('/route53/add-record', methods=['POST'])
+def add_record():
+    data = request.json
+    hosted_zone_id = data.get("hosted_zone_id")
+    record_name = data.get("record_name")
+    record_type = data.get("record_type")
+    record_value = data.get("record_value")
+
+    from pulumi_project.scripts.manage_dns_records import add_dns_record
+    success = add_dns_record(hosted_zone_id, record_name, record_type, record_value)
+
+    return jsonify({"status": "success" if success else "failed"})
+
+
+@app.route('/route53/delete-record', methods=['POST'])
+def delete_record():
+    data = request.json
+    hosted_zone_id = data.get("hosted_zone_id")
+    record_name = data.get("record_name")
+    record_type = data.get("record_type")
+
+    from pulumi_project.scripts.manage_dns_records import delete_dns_record
+    success = delete_dns_record(hosted_zone_id, record_name, record_type)
+
+    return jsonify({"status": "success" if success else "failed"})
 
 # route53 management and creations
 # ---------------------------------------------------------------

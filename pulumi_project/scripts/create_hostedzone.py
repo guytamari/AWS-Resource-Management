@@ -7,14 +7,12 @@ def save_hosted_zone_to_file(hosted_zone_data):
     if os.path.exists(HOSTEDZONE_FILE):
         try:
             with open(HOSTEDZONE_FILE, "r") as file:
-                # Check if the file is empty
                 if file.read(1):
-                    file.seek(0)  # Move back to the start of the file
+                    file.seek(0)  
                     hosted_zones = json.load(file)
                 else:
-                    hosted_zones = []  # Handle empty file as an empty list
+                    hosted_zones = [] 
         except json.JSONDecodeError:
-            # If the file exists but contains invalid JSON, handle the error
             print(f"Error: {HOSTEDZONE_FILE} contains invalid JSON.")
             hosted_zones = []
     else:
