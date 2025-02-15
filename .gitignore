@@ -1,3 +1,5 @@
 temp/
 temp
 s3_buckets.json
+pulumi_project/__pycache__
+hostedzone.json

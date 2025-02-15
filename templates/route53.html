@@ -17,17 +17,121 @@
         color: white;
         border: none;
         cursor: pointer;
-        margin-top: 20px;
+        margin: 5px;
       }
       button:hover {
         background-color: #0056b3;
+      }
+      .delete-btn {
+        background-color: #dc3545;
+      }
+      .delete-btn:hover {
+        background-color: #a71d2a;
+      }
+      .upload-btn {
+        background-color: #28a745;
+      }
+      .upload-btn:hover {
+        background-color: #218838;
+      }
+      table {
+        width: 80%;
+        margin-top: 30px;
+        border-collapse: collapse;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      th,
+      td {
+        padding: 10px;
+        text-align: center;
+        border: 1px solid #ddd;
+      }
+      th {
+        background-color: #f2f2f2;
       }
     </style>
   </head>
   <body>
     <h1>AWS Resource Manager</h1>
-    <form action="/create-route53" method="POST">
-      <button type="submit">Create Route53</button>
-    </form>
+    <a href="/route53/spec-route53">
+      <button type="button">Create Hosted Zone</button>
+    </a>
+
+    <h2>Existing Hosted Zones</h2>
+    <table id="zone-table">
+      <thead>
+        <tr>
+          <th>Domain Name</th>
+          <th>Access Type</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Route53 hosted zone rows will be populated here -->
+      </tbody>
+    </table>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        async function fetchHostedZones() {
+          try {
+            const response = await fetch("/route53/zones");
+            const data = await response.json();
+
+            const tableBody = document.querySelector("#zone-table tbody");
+            tableBody.innerHTML = "";
+            data.hosted_zones.forEach((zone) => {
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                    <td>${zone.domain_name}</td>
+                    <td>${zone.access_type}</td>
+                    <td>
+                        <button class="manage-dns-btn" onclick="manageDnsRecords('${zone.hosted_zone_id}')">Manage DNS Records</button>
+                        <button class="delete-btn" onclick="deleteHostedZone('${zone.hosted_zone_id}')">Delete</button>
+                    </td>
+                `;
+              tableBody.appendChild(row);
+            });
+          } catch (error) {
+            console.error("Error fetching hosted zones:", error);
+          }
+        }
+
+        fetchHostedZones(); // Call the function when the page is loaded
+      });
+      async function manageZone(domainName, action) {
+        if (
+          action === "delete" &&
+          !confirm(
+            `Are you sure you want to delete the hosted zone for ${domainName}?`
+          )
+        )
+          return;
+
+        try {
+          const response = await fetch(`/route53/${action}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ domain_name: domainName }),
+          });
+
+          const result = await response.json();
+          alert(
+            `Hosted Zone ${domainName} ${action} request sent.\nStatus: ${result.status}`
+          );
+
+          if (action === "delete") fetchHostedZones(); // Refresh hosted zone list after deletion
+        } catch (error) {
+          console.error(`Error ${action} hosted zone:`, error);
+          alert(`Failed to ${action} hosted zone ${domainName}.`);
+        }
+      }
+
+      async function manageDnsRecords(domainName) {
+        // Implement the logic to manage DNS records for the hosted zone
+        alert(`Managing DNS records for ${domainName}`);
+      }
+    </script>
   </body>
 </html>

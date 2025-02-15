@@ -1,2 +1,4 @@
 *.pyc
 venv/
+__pycache__
+ec2_instances.json

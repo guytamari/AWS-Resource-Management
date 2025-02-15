@@ -34,6 +34,10 @@ def spec_s3():
     return render_template("spec-s3.html")
 
 
+@app.route("/route53/spec-route53")
+def spec_route53():
+    return render_template("spec-route53.html")
+
 
 
 # ---------------------------------------------------------------
@@ -186,5 +190,46 @@ def upload_file():
 
 # s3 management and creations
 # ---------------------------------------------------------------
+# route53 management and creations
+
+
+@app.route('/route53/spec-route53/create-route53', methods=["POST"])
+def create_route53():
+    domain_name = request.form.get("domain_name")
+    description = request.form.get("description")
+    access_type = request.form.get("type")
+    tag_name = request.form.get("tag_name")
+    response_data = {
+        "domain_name": domain_name,
+        "description": description,
+        "access_type": access_type,
+        "tag_name": tag_name
+    }
+    from pulumi_project.scripts.create_hostedzone import create_hostedzone
+    create_hostedzone(domain_name,description,access_type,tag_name)
+
+    return redirect(url_for("home"))
+    
+    
+
+
+
+
+@app.route('/route53/zones', methods=["GET"])
+def fetch_hosted_zones():
+    from pulumi_project.scripts.fetch_hostedzone import fetch_hostedzone
+    return fetch_hostedzone()
+    data, status_code = fetch_hostedzone()
+    return jsonify(data), status_code
+
+
+
+
+
+# route53 management and creations
+# ---------------------------------------------------------------
+
+
+
 if __name__ == "__main__":
     app.run(debug=True)
