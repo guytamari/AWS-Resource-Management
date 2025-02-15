@@ -1,34 +1,41 @@
 from flask import jsonify
 import boto3
+import json
+import os
+
+BUCKETS_FILE = "s3_buckets.json"
+
+def load_bucket_names():
+    if os.path.exists(BUCKETS_FILE):
+        with open(BUCKETS_FILE, "r") as f:
+            return json.load(f)
+    return []
 
 def fetch_s3_buckets():
     try:
         s3_client = boto3.client("s3")
-        response = s3_client.list_buckets()
+        stored_buckets = load_bucket_names()
         filtered_buckets = []
 
-        for bucket in response["Buckets"]:
-            bucket_name = bucket["Name"]
+        for bucket_name in stored_buckets:
             try:
-                tag_response = s3_client.get_bucket_tagging(Bucket=bucket_name)
-                tags = {tag["Key"]: tag["Value"] for tag in tag_response["TagSet"]}
+                # Check if bucket exists
+                s3_client.head_bucket(Bucket=bucket_name)
 
-                required_tags = {"Owner": "guytamari"}
+                url = f"https://{bucket_name}.s3.us-east-1.amazonaws.com"
 
-                if all(tags.get(key) == value for key, value in required_tags.items()):
-                    location = s3_client.get_bucket_location(Bucket=bucket_name).get("LocationConstraint", "us-east-1")
-                    filtered_buckets.append({
-                        "name": bucket_name,
-                        "region": location,
-                        "tags": tags
-                    })
+                filtered_buckets.append({
+                    "name": bucket_name,
+                    "url": url
+                })
 
-            except s3_client.exceptions.ClientError as e:
-                if "NoSuchTagSet" in str(e):
-                    print(f"No tags found for {bucket_name}")
-                else:
-                    print(f"Error fetching tags for {bucket_name}: {e}")
+            except s3_client.exceptions.ClientError:
+                print(f"Bucket {bucket_name} no longer exists, removing from list.")
+                stored_buckets.remove(bucket_name)
+                with open(BUCKETS_FILE, "w") as f:
+                    json.dump(stored_buckets, f)
 
         return jsonify({"buckets": filtered_buckets}), 200
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500

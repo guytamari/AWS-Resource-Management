@@ -4,6 +4,7 @@ import subprocess
 import os
 import boto3
 ec2_client = boto3.client('ec2')
+s3_client = boto3.client('s3')
 app = Flask(__name__)
 
 @app.route("/")
@@ -125,7 +126,7 @@ def create_s3():
     os.environ["ACCESS_TYPE"] = access_type
     files = request.files.getlist('file_upload')
     
-    print(f"data from app.py {bucket_name},{access_type}")
+
     
     if not os.path.exists("temp"):
         os.makedirs("temp")
@@ -143,10 +144,6 @@ def create_s3():
             os.remove(temp_file)
     else:
         calling_the_s3_creation(False, None)
-
-
-
-    
     
     return redirect(url_for("home"))
 
@@ -158,6 +155,39 @@ def fetch_s3():
 
 
 
+@app.route('/s3/delete', methods=["POST"])
+def delete_bucket():
+    data = request.json
+    bucket_name = data.get("bucket_name")
 
+    if not bucket_name:
+        return jsonify({"error": "Bucket name is required"}), 400
+
+    # delete all files inside the bucket
+    objects = s3_client.list_objects_v2(Bucket=bucket_name)
+    if "Contents" in objects:
+        for obj in objects["Contents"]:
+            s3_client.delete_object(Bucket=bucket_name, Key=obj["Key"])
+
+    # delete the bucket itself
+    s3_client.delete_bucket(Bucket=bucket_name)
+
+    return jsonify({"status": "Bucket deleted successfully"}), 200
+
+
+
+@app.route('/s3/upload', methods=["POST"])
+def upload_file():
+    bucket_name = request.form.get("bucket_name")
+    file = request.files["file"]
+
+    s3_client.upload_fileobj(file, bucket_name, file.filename)
+
+    return jsonify({"status": "File uploaded successfully"}), 200
+
+
+
+# s3 management and creations
+# ---------------------------------------------------------------
 if __name__ == "__main__":
     app.run(debug=True)

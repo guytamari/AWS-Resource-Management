@@ -63,7 +63,7 @@
       <thead>
         <tr>
           <th>Bucket Name</th>
-          <th>Region</th>
+          <th>Bucket URL</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -83,18 +83,14 @@
           data.buckets.forEach((bucket) => {
             const row = document.createElement("tr");
             row.innerHTML = `
-              <td>${bucket.name}</td>
-              <td>${bucket.region || "N/A"}</td>
-              <td>
-                <button class="delete-btn" onclick="manageBucket('${
-                  bucket.name
-                }', 'delete')">Delete</button>
-                <br>
-                <input type="file" id="file-${bucket.name}" />
-                <button class="upload-btn" onclick="uploadFile('${
-                  bucket.name
-                }')">Upload</button>
-              </td>
+                <td>${bucket.name}</td>
+                <td><a href="${bucket.url}" target="_blank">${bucket.url}</a></td>
+                <td>
+                    <button class="delete-btn" onclick="manageBucket('${bucket.name}', 'delete')">Delete</button>
+                    <br>
+                    <input type="file" id="file-${bucket.name}" />
+                    <button class="upload-btn" onclick="uploadFile('${bucket.name}')">Upload</button>
+                </td>
             `;
             tableBody.appendChild(row);
           });
