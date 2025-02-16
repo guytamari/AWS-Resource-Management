@@ -47,7 +47,12 @@
   <body>
     <h1>Create an EC2 Instance</h1>
 
-    <form action="/create-ec2" method="POST">
+    <form
+      action="/create-ec2"
+      method="POST"
+      id="ec2form"
+      onsubmit="showAlert()"
+    >
       <label for="instance_type">Instance Type:</label>
       <select id="instance_type" name="instance_type" required>
         <option value="t3.nano">t3.nano</option>
@@ -76,5 +81,12 @@
 
       <button type="submit">Create EC2 Instance</button>
     </form>
+    <script>
+      function showAlert() {
+        alert(
+          "EC2 instance creation is starting. This may take a few minutes."
+        );
+      }
+    </script>
   </body>
 </html>

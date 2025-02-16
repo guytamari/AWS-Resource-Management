@@ -55,10 +55,10 @@
         const checkbox = document.getElementsByName("confirm_public")[0];
 
         if (accessType === "public") {
-          confirmationField.classList.remove("hidden"); // Show
+          confirmationField.classList.remove("hidden");
           checkbox.setAttribute("required", "true");
         } else {
-          confirmationField.classList.add("hidden"); // Hide
+          confirmationField.classList.add("hidden");
           checkbox.removeAttribute("required");
           checkbox.checked = false;
         }

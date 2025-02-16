@@ -54,9 +54,8 @@ def create_ec2():
     os.environ["NUM_INSTANCES"] = num_instances
     env = os.environ.copy()
     env["PULUMI_STACK"] = "dev"
-    subprocess.run(["pulumi", "refresh", "--stack","dev","--yes"], cwd="pulumi_project",env=env)
-    subprocess.run(["pulumi", "up", "--stack","dev", "--yes"], cwd="pulumi_project",env=env)
-    return redirect(url_for("home"))
+    subprocess.Popen(["pulumi", "up", "--stack", "dev", "--yes"], cwd="pulumi_project", env=env)
+    return redirect(url_for("ec2"))
 
 
 @app.route("/ec2/instances", methods=["GET"])
@@ -112,11 +111,11 @@ def calling_the_s3_creation(is_files, temp_files):
         from pulumi_project.scripts.create_s3 import create_s3, upload_files_to_s3
         s3 = create_s3()
         upload_files_to_s3(temp_files)
-        print(s3)
+        return jsonify({"status":"success"})
     else:
         from pulumi_project.scripts.create_s3 import create_s3
         s3 = create_s3()
-        print(s3)
+        return jsonify({"status":"success"})
 
         
         
@@ -149,7 +148,7 @@ def create_s3():
     else:
         calling_the_s3_creation(False, None)
     
-    return redirect(url_for("home"))
+    return render_template("s3.html")
 
 
 @app.route('/s3/buckets', methods=["GET"])
@@ -208,7 +207,7 @@ def create_route53():
     from pulumi_project.scripts.create_hostedzone import create_hostedzone
     create_hostedzone(domain_name,description,access_type,tag_name)
 
-    return redirect(url_for("home"))
+    return render_template("route53.html")
     
     
 
@@ -227,8 +226,11 @@ def fetch_hosted_zones():
 @app.route('/route53/manage-records/<hosted_zone_id>')
 def manage_records(hosted_zone_id):
     from pulumi_project.scripts.manage_dns_records import fetch_dns_records
+    from pulumi_project.scripts.fetch_hostedzone import get_hostzoned_name
+    hostnamezoned_name = get_hostzoned_name(hosted_zone_id)
     records = fetch_dns_records(hosted_zone_id)
-    return render_template("manage_records.html", records=records, hosted_zone_id=hosted_zone_id)
+    return render_template("manage_records.html", records=records, hosted_zone_id=hosted_zone_id,
+    hostnamezoned_name=hostnamezoned_name)
 
 
 @app.route('/route53/add-record', methods=['POST'])
@@ -252,6 +254,8 @@ def delete_record():
     record_name = data.get("record_name")
     record_type = data.get("record_type")
     record_values = data.get("record_values")
+    if record_type in ["NS", "SOA"]:
+        return jsonify({"status": "failed", "message": f"Cannot delete {record_type} record"}), 400
 
     from pulumi_project.scripts.manage_dns_records import delete_dns_record
     success = delete_dns_record(hosted_zone_id, record_name, record_type,record_values)

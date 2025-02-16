@@ -41,6 +41,7 @@
   <body>
     <h1>Manage DNS Records</h1>
     <h2>Records for Hosted Zone: {{ hosted_zone_id }}</h2>
+    <h3>Hosted zone name: {{ hostnamezoned_name }}</h3>
     <table>
       <thead>
         <tr>
@@ -79,11 +80,22 @@
     </table>
     <h2>Add New Record</h2>
     <form id="add-record-form">
-      <input type="text" id="record-name" placeholder="Record Name" required />
+      <div>
+        <label for="record-name">Record Name (prefix only): </label>
+        <input
+          type="text"
+          id="record-name"
+          placeholder="Record Name"
+          required
+        />
+        <span id="zone-name-span">{{ hostnamezoned_name }}</span>
+      </div>
       <select id="record-type">
         <option value="A">A</option>
         <option value="CNAME">CNAME</option>
         <option value="TXT">TXT</option>
+        <option value="SRV">SRV</option>
+        <option value="AAAA">AAAA</option>
       </select>
       <input
         type="text"
@@ -101,16 +113,19 @@
           event.preventDefault();
 
           const hostedZoneId = "{{ hosted_zone_id }}";
-          const recordName = document.getElementById("record-name").value;
+          const recordPrefix = document.getElementById("record-name").value;
           const recordType = document.getElementById("record-type").value;
           const recordValue = document.getElementById("record-value").value;
+          const fullRecordName = `${recordPrefix}.${
+            document.getElementById("zone-name-span").innerText
+          }`;
 
           const response = await fetch("/route53/add-record", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               hosted_zone_id: hostedZoneId,
-              record_name: recordName,
+              record_name: fullRecordName,
               record_type: recordType,
               record_value: recordValue,
             }),
@@ -126,6 +141,11 @@
         });
 
       async function deleteRecord(recordName, recordType, resourceRecords) {
+        if (recordType === "NS" || recordType === "SOA") {
+          alert(`You cannot delete ${recordType} records.`);
+          return;
+        }
+
         const recordValues = resourceRecords.map((r) => r.Value);
         if (
           !confirm(`Are you sure you want to delete the record: ${recordName}?`)
