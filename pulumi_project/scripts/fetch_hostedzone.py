@@ -4,7 +4,7 @@ import os
 HOSTEDZONE_FILE = "hostedzone.json"
 
 def fetch_hostedzone():
-    if os.path.exists(HOSTEDZONE_FILE):
+    if os.path.exists(HOSTEDZONE_FILE) and os.path.getsize(HOSTEDZONE_FILE) > 0:
         with open(HOSTEDZONE_FILE, "r") as file:
             hosted_zones = json.load(file)
     else:

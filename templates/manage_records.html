@@ -41,7 +41,6 @@
   <body>
     <h1>Manage DNS Records</h1>
     <h2>Records for Hosted Zone: {{ hosted_zone_id }}</h2>
-
     <table>
       <thead>
         <tr>
@@ -54,13 +53,22 @@
       <tbody id="records-table">
         {% for record in records %}
         <tr>
-          <td>{{ record.name }}</td>
-          <td>{{ record.type }}</td>
-          <td>{{ record.value }}</td>
+          <td>{{ record.Name }}</td>
+          <td>{{ record.Type }}</td>
+          <td>
+            {% for resource_record in record.ResourceRecords %}
+            <div
+              id="record-value-{{ record.Name }}-{{ resource_record.Value }}"
+            >
+              {{ resource_record.Value }}
+            </div>
+            <br />
+            {% endfor %}
+          </td>
           <td>
             <button
               class="delete-btn"
-              onclick="deleteRecord('{{ record.name }}', '{{ record.type }}')"
+              onclick='deleteRecord("{{ record.Name }}", "{{ record.Type }}", {{ record.ResourceRecords | tojson }})'
             >
               Delete
             </button>
@@ -69,7 +77,6 @@
         {% endfor %}
       </tbody>
     </table>
-
     <h2>Add New Record</h2>
     <form id="add-record-form">
       <input type="text" id="record-name" placeholder="Record Name" required />
@@ -118,7 +125,8 @@
           }
         });
 
-      async function deleteRecord(recordName, recordType) {
+      async function deleteRecord(recordName, recordType, resourceRecords) {
+        const recordValues = resourceRecords.map((r) => r.Value);
         if (
           !confirm(`Are you sure you want to delete the record: ${recordName}?`)
         )
@@ -133,6 +141,7 @@
             hosted_zone_id: hostedZoneId,
             record_name: recordName,
             record_type: recordType,
+            record_values: recordValues,
           }),
         });
 

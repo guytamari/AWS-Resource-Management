@@ -251,12 +251,18 @@ def delete_record():
     hosted_zone_id = data.get("hosted_zone_id")
     record_name = data.get("record_name")
     record_type = data.get("record_type")
+    record_values = data.get("record_values")
 
     from pulumi_project.scripts.manage_dns_records import delete_dns_record
-    success = delete_dns_record(hosted_zone_id, record_name, record_type)
+    success = delete_dns_record(hosted_zone_id, record_name, record_type,record_values)
 
     return jsonify({"status": "success" if success else "failed"})
 
+
+@app.route('/route53/delete-zone', methods=['POST'])
+def delete_hostedzone():
+    from pulumi_project.scripts.delete_hostedzone import delete_hosted_zone
+    return delete_hosted_zone()
 # route53 management and creations
 # ---------------------------------------------------------------
 

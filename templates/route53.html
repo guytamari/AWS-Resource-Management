@@ -98,34 +98,23 @@
           }
         }
 
-        fetchHostedZones(); // Call the function when the page is loaded
+        fetchHostedZones();
       });
-      async function manageZone(domainName, action) {
-        if (
-          action === "delete" &&
-          !confirm(
-            `Are you sure you want to delete the hosted zone for ${domainName}?`
-          )
-        )
+      async function deleteHostedZone(hostedZoneId) {
+        if (!confirm("Are you sure you want to delete this hosted zone?"))
           return;
 
-        try {
-          const response = await fetch(`/route53/${action}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ domain_name: domainName }),
-          });
+        const response = await fetch("/route53/delete-zone", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ hosted_zone_id: hostedZoneId }),
+        });
 
-          const result = await response.json();
-          alert(
-            `Hosted Zone ${domainName} ${action} request sent.\nStatus: ${result.status}`
-          );
+        const result = await response.json();
+        alert(`Delete request sent.\nStatus: ${result.status}`);
 
-          if (action === "delete") fetchHostedZones(); // Refresh hosted zone list after deletion
-        } catch (error) {
-          console.error(`Error ${action} hosted zone:`, error);
-          alert(`Failed to ${action} hosted zone ${domainName}.`);
-        }
+        // Refresh hosted zone list after deletion
+        fetchHostedZones();
       }
 
       async function manageDnsRecords(hostedZoneId) {

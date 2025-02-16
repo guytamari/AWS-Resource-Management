@@ -1,6 +1,8 @@
 import boto3
 import json
 import os
+import time
+import uuid
 HOSTEDZONE_FILE = "hostedzone.json"
 
 def save_hosted_zone_to_file(hosted_zone_data):
@@ -37,7 +39,7 @@ def create_hostedzone(domain_name, description, access_type, tag_name):
     
     response_dict = {
         "Name": domain_name,
-        "CallerReference": str(hash(domain_name)),
+        "CallerReference": str(uuid.uuid4()),
         "HostedZoneConfig": {
             "Comment": description,
             "PrivateZone": PrivateZone

@@ -34,7 +34,8 @@ def add_dns_record(hosted_zone_id, record_name, record_type, record_value):
 
 
 
-def delete_dns_record(hosted_zone_id, record_name, record_type):
+def delete_dns_record(hosted_zone_id, record_name, record_type, record_value):
+    record_value_payload = [{"Value":record_value[0]}]
     response = route53_client.change_resource_record_sets(
         HostedZoneId=hosted_zone_id,
         ChangeBatch={
@@ -45,7 +46,7 @@ def delete_dns_record(hosted_zone_id, record_name, record_type):
                         "Name": record_name,
                         "Type": record_type,
                         "TTL": 300,
-                        "ResourceRecords": [{"Value": "dummy"}],
+                        "ResourceRecords": record_value_payload,
                     },
                 }
             ]
