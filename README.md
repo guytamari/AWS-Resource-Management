@@ -1,4 +1,3 @@
-
 # AWS Resource Management Portal 🌐
 
 ## Overview 📄
@@ -12,6 +11,7 @@ This project is a Flask-based web application designed to help developers manage
 - Create EC2 instances with custom configurations.
 - Start, stop, and restart instances.
 - View a list of existing instances.
+  ![til](https://github.com/guytamari/flask-exc/gifs/ec2.gif)
 
 ### S3 Bucket Management 🗂️:
 
@@ -19,6 +19,7 @@ This project is a Flask-based web application designed to help developers manage
 - Upload files to an S3 bucket.
 - List all existing S3 buckets.
 - Delete S3 buckets and their contents.
+  ![til](https://github.com/guytamari/flask-exc/gifs/s3.gif)
 
 ### Route 53 Domain Management 🌍:
 
@@ -26,6 +27,7 @@ This project is a Flask-based web application designed to help developers manage
 - Manage DNS records (add/delete records).
 - Fetch hosted zone details.
 - Delete hosted zones.
+  ![til](https://github.com/guytamari/flask-exc/gifs/route53.gif)
 
 ## Technologies Used 🛠️
 
@@ -103,31 +105,31 @@ The application will be accessible at [http://127.0.0.1:5000/](http://127.0.0.1:
 
 ### EC2 Endpoints 🖥️
 
-| Endpoint            | Method | Description               |
-|---------------------|--------|---------------------------|
-| `/create-ec2`       | POST   | Create a new EC2 instance |
-| `/ec2/instances`    | GET    | Get list of EC2 instances |
-| `/ec2/start`        | POST   | Start an EC2 instance     |
-| `/ec2/stop`         | POST   | Stop an EC2 instance      |
-| `/ec2/restart`      | POST   | Restart an EC2 instance   |
+| Endpoint         | Method | Description               |
+| ---------------- | ------ | ------------------------- |
+| `/create-ec2`    | POST   | Create a new EC2 instance |
+| `/ec2/instances` | GET    | Get list of EC2 instances |
+| `/ec2/start`     | POST   | Start an EC2 instance     |
+| `/ec2/stop`      | POST   | Stop an EC2 instance      |
+| `/ec2/restart`   | POST   | Restart an EC2 instance   |
 
 ### S3 Endpoints 🗂️
 
-| Endpoint          | Method | Description               |
-|-------------------|--------|---------------------------|
-| `/create-s3`      | POST   | Create a new S3 bucket    |
-| `/s3/buckets`     | GET    | Fetch existing S3 buckets |
-| `/s3/delete`      | POST   | Delete an S3 bucket       |
-| `/s3/upload`      | POST   | Upload a file to S3       |
+| Endpoint      | Method | Description               |
+| ------------- | ------ | ------------------------- |
+| `/create-s3`  | POST   | Create a new S3 bucket    |
+| `/s3/buckets` | GET    | Fetch existing S3 buckets |
+| `/s3/delete`  | POST   | Delete an S3 bucket       |
+| `/s3/upload`  | POST   | Upload a file to S3       |
 
 ### Route 53 Endpoints 🌍
 
-| Endpoint               | Method | Description                |
-|------------------------|--------|----------------------------|
-| `/route53/zones`       | GET    | Fetch existing hosted zones|
-| `/route53/add-record`  | POST   | Add a DNS record           |
-| `/route53/delete-record` | POST | Delete a DNS record        |
-| `/route53/delete-zone` | POST   | Delete a hosted zone       |
+| Endpoint                 | Method | Description                 |
+| ------------------------ | ------ | --------------------------- |
+| `/route53/zones`         | GET    | Fetch existing hosted zones |
+| `/route53/add-record`    | POST   | Add a DNS record            |
+| `/route53/delete-record` | POST   | Delete a DNS record         |
+| `/route53/delete-zone`   | POST   | Delete a hosted zone        |
 
 ## Deployment 🚀
 
