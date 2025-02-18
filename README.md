@@ -11,7 +11,7 @@ This project is a Flask-based web application designed to help developers manage
 - Create EC2 instances with custom configurations.
 - Start, stop, and restart instances.
 - View a list of existing instances.
-  ![til](https://github.com/guytamari/flask-exc/gifs/ec2.gif)
+  ![til](https://github.com/guytamari/aws-python-project/gifs/ec2.gif)
 
 ### S3 Bucket Management 🗂️:
 
@@ -19,7 +19,7 @@ This project is a Flask-based web application designed to help developers manage
 - Upload files to an S3 bucket.
 - List all existing S3 buckets.
 - Delete S3 buckets and their contents.
-  ![til](https://github.com/guytamari/flask-exc/gifs/s3.gif)
+  ![til](https://github.com/guytamari/aws-python-project/gifs/s3.gif)
 
 ### Route 53 Domain Management 🌍:
 
@@ -27,7 +27,7 @@ This project is a Flask-based web application designed to help developers manage
 - Manage DNS records (add/delete records).
 - Fetch hosted zone details.
 - Delete hosted zones.
-  ![til](https://github.com/guytamari/flask-exc/gifs/route53.gif)
+  ![til](https://github.com/guytamari/aws-python-project/gifs/route53.gif)
 
 ## Technologies Used 🛠️
 
