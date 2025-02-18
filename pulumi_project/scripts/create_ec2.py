@@ -10,7 +10,8 @@ def create_ec2_instances():
             f"guytamari-instance-{i+1}",
             instance_type=INSTANCE_TYPE,
             ami=AMI_ID,
-            tags={"Name": f"{TAG_NAME}-{i+1}", "Owner": "guytamari"}
+            tags={"Name": f"{TAG_NAME}-{i+1}", "Owner": "guytamari"},
+            opts=pulumi.ResourceOptions(retain_on_delete=True)
         )
         instances.append(instance)
 
