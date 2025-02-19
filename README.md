@@ -65,7 +65,7 @@ Ensure you have the following installed:
 ### Clone the Repository 💻
 
 ```bash
-git clone https://github.com/your-username/aws-resource-management.git
+git clone https://github.com/guytamari/aws-resource-management.git
 cd aws-resource-management
 ```
 
