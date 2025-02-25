@@ -143,20 +143,5 @@ The application will be accessible at [http://127.0.0.1:5000/](http://127.0.0.1:
 | `/route53/delete-record` | POST   | Delete a DNS record         |
 | `/route53/delete-zone`   | POST   | Delete a hosted zone        |
 
-## Deployment 🚀
 
-### Running with Docker 🐳
 
-You can also run the application inside a Docker container:
-
-```bash
-docker build -t aws-resource-management .
-docker run -p 5000:5000 aws-resource-management
-```
-
-### Deploying to AWS EC2 ☁️
-
-- Launch an EC2 instance.
-- Install dependencies (Flask, Pulumi, AWS CLI, etc.).
-- Clone the repository and run `python main.py`.
-- Use an Nginx reverse proxy for production deployment.
