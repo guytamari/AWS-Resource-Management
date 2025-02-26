@@ -78,6 +78,21 @@ Ensure to download awscli on you system.
 
 Ensure to download pulumi-cli on you system.
 
+Make Sure to login pulumi as local, by using:
+
+``` bash
+pulumi login --local
+
+```
+
+Make sure to have a stack name: "dev" on your pulumi by using:
+
+``` bash
+cd pulumi_project
+pulumi stack init dev
+
+```
+
 ### Set Up AWS Credentials 🏞️
 
 Ensure you have AWS credentials configured using:
