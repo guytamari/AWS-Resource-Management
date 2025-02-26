@@ -76,6 +76,7 @@ pip install -r requirements.txt
 ```
 
 ### Set Up AWS Credentials 🏞️
+Ensure to download awscli on you system.
 
 Ensure you have AWS credentials configured using:
 
