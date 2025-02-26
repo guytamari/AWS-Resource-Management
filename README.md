@@ -74,9 +74,11 @@ cd aws-resource-management
 ```bash
 pip install -r requirements.txt
 ```
+Ensure to download awscli on you system.
+
+Ensure to download pulumi-cli on you system.
 
 ### Set Up AWS Credentials 🏞️
-Ensure to download awscli on you system.
 
 Ensure you have AWS credentials configured using:
 
