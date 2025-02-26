@@ -62,6 +62,7 @@ Ensure you have the following installed:
 - Boto3 (Python SDK for AWS)
 - Git (for cloning the repository)
 
+
 ### Clone the Repository 💻
 
 ```bash
@@ -106,6 +107,9 @@ aws configure
 ```bash
 python main.py
 ```
+
+**Notice that first time of using this program will take some time!
+**
 
 The application will be accessible at [http://127.0.0.1:5000/](http://127.0.0.1:5000/)
 
